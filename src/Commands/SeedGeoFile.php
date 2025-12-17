@@ -255,9 +255,9 @@ class SeedGeoFile extends Command
         $geoItems = new Collection;
         $batch = 0;
 
-        $this->db->beginTransaction();
-
         try {
+            $this->db->beginTransaction();
+
             // Clear table if not appending
             if (!$isAppend) {
                 $this->info("Truncating '$tableName' table...");
@@ -290,8 +290,12 @@ class SeedGeoFile extends Command
 
             return self::SUCCESS;
         } catch (Exception $e) {
-            $this->db->rollBack();
+            if ($this->db->transactionLevel() > 0) {
+                $this->db->rollBack();
+            }
+
             $this->error('Error: ' . $e->getMessage());
+            $this->error('Stack trace: ' . $e->getTraceAsString());
 
             return self::FAILURE;
         }
