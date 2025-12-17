@@ -187,7 +187,7 @@ class Geo extends EloquentTreeItem
     }
 
     // Return only $fields as Json. null = Show all
-    public function fliterFields(?$fields = null)
+    public function fliterFields(string|array|null $fields = null)
     {
         if (is_string($fields)) { // Comma Seperated List (eg Url Param)
             $fields = explode(',', $fields);
@@ -218,4 +218,5 @@ class Geo extends EloquentTreeItem
         require_once __DIR__ . '/routes.php';
     }
 }
+
 
