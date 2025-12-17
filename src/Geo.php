@@ -103,7 +103,7 @@ class Geo extends EloquentTreeItem
     // ----------------------------------------------
 
     // search in `name` and `alternames` / return collection
-    public static function searchNames($name, Geo $parent = null)
+    public static function searchNames(string $name, ?Geo $parent = null)
     {
         $query = self::search($name)->orderBy('name', 'ASC');
 
@@ -187,7 +187,7 @@ class Geo extends EloquentTreeItem
     }
 
     // Return only $fields as Json. null = Show all
-    public function fliterFields($fields = null)
+    public function fliterFields(?$fields = null)
     {
         if (is_string($fields)) { // Comma Seperated List (eg Url Param)
             $fields = explode(',', $fields);
@@ -218,3 +218,4 @@ class Geo extends EloquentTreeItem
         require_once __DIR__ . '/routes.php';
     }
 }
+
