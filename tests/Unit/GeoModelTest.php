@@ -161,4 +161,3 @@ class GeoModelTest extends TestCase
         $this->assertEquals('ADM3', Geo::LEVEL_3);
     }
 }
-

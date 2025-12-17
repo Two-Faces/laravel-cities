@@ -139,6 +139,7 @@ class ImportJsonFile extends Command
         $contents = file_get_contents($filename);
         if ($contents === false) {
             $this->error("Failed to read file: $filename");
+
             return null;
         }
 
@@ -173,6 +174,7 @@ class ImportJsonFile extends Command
                     $geo->update($item);
                     $count++;
                     $progressBar->advance();
+
                     continue;
                 }
             }

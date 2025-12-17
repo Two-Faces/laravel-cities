@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Laravel Cities Usage Examples
  *
@@ -212,4 +214,3 @@ class GeoController
         ]);
     }
 }
-

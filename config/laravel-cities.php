@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -93,4 +95,3 @@ return [
         'admin1_codes' => 'admin1CodesASCII.txt',
     ],
 ];
-

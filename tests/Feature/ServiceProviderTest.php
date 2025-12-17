@@ -59,4 +59,3 @@ class ServiceProviderTest extends TestCase
         $this->assertNotEmpty($migrations);
     }
 }
-

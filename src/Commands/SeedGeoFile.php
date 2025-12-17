@@ -99,6 +99,7 @@ class SeedGeoFile extends Command
             // Validate line format
             if (count($lineData) !== 19) {
                 $this->warn('Invalid line format: ' . ($lineData[0] ?? 'unknown'));
+
                 continue;
             }
 
@@ -253,6 +254,7 @@ class SeedGeoFile extends Command
 
         if (!file_exists($fileName)) {
             $this->warn("Hierarchy file not found: $fileName");
+
             return;
         }
 

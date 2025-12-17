@@ -12,7 +12,7 @@ class HelpersTest extends TestCase
 {
     public function test_collection_can_add_items(): void
     {
-        $collection = new Collection();
+        $collection = new Collection;
         $itemData = ['1', 'Test', 'Test Item', '', '', '', '', 'ADM1'];
 
         $item = new Item($itemData, $collection);
@@ -23,7 +23,7 @@ class HelpersTest extends TestCase
 
     public function test_collection_can_find_by_geo_id(): void
     {
-        $collection = new Collection();
+        $collection = new Collection;
         $itemData = ['123', 'Test', 'Test Item', '', '', '', '', 'ADM1'];
 
         $item = new Item($itemData, $collection);
@@ -37,7 +37,7 @@ class HelpersTest extends TestCase
 
     public function test_collection_reset_clears_items(): void
     {
-        $collection = new Collection();
+        $collection = new Collection;
         $itemData = ['1', 'Test', 'Test Item', '', '', '', '', 'ADM1'];
 
         $item = new Item($itemData, $collection);
@@ -52,7 +52,7 @@ class HelpersTest extends TestCase
 
     public function test_item_can_get_id(): void
     {
-        $collection = new Collection();
+        $collection = new Collection;
         $itemData = ['999', 'Test', 'Test Item', '', '', '', '', 'ADM1'];
 
         $item = new Item($itemData, $collection);
@@ -62,7 +62,7 @@ class HelpersTest extends TestCase
 
     public function test_item_can_get_name(): void
     {
-        $collection = new Collection();
+        $collection = new Collection;
         $itemData = ['1', 'Test', 'My City', '', '', '', '', 'ADM1'];
 
         $item = new Item($itemData, $collection);
@@ -72,7 +72,7 @@ class HelpersTest extends TestCase
 
     public function test_item_can_add_child(): void
     {
-        $collection = new Collection();
+        $collection = new Collection;
         $itemData = ['1', 'Test', 'Parent', '', '', '', '', 'ADM1'];
 
         $item = new Item($itemData, $collection);
@@ -83,7 +83,7 @@ class HelpersTest extends TestCase
 
     public function test_item_can_set_parent(): void
     {
-        $collection = new Collection();
+        $collection = new Collection;
 
         // Add parent to collection first
         $parentData = ['parent456', 'Parent', 'Parent City', '', '', '', '', 'ADM1'];
@@ -100,7 +100,7 @@ class HelpersTest extends TestCase
 
     public function test_item_has_children(): void
     {
-        $collection = new Collection();
+        $collection = new Collection;
         $itemData = ['1', 'Test', 'Parent', '', '', '', '', 'ADM1'];
 
         $item = new Item($itemData, $collection);
@@ -116,7 +116,7 @@ class HelpersTest extends TestCase
 
     public function test_item_get_children(): void
     {
-        $collection = new Collection();
+        $collection = new Collection;
 
         // Create parent
         $parentData = ['1', 'Parent', 'Parent City', '', '', '', '', 'ADM1'];
@@ -141,4 +141,3 @@ class HelpersTest extends TestCase
         $this->assertCount(2, $children);
     }
 }
-

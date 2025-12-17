@@ -16,9 +16,6 @@ class Collection
 
     /**
      * Add an item to the collection.
-     *
-     * @param Item $item
-     * @return void
      */
     public function add(Item $item): void
     {
@@ -27,9 +24,6 @@ class Collection
 
     /**
      * Find an item by geo ID.
-     *
-     * @param string|int $geoId
-     * @return Item|null
      */
     public function findGeoId(string|int $geoId): ?Item
     {
@@ -38,9 +32,6 @@ class Collection
 
     /**
      * Find an item by ID.
-     *
-     * @param string|int $id
-     * @return Item|false
      */
     public function findId(string|int $id): Item|false
     {
@@ -55,9 +46,6 @@ class Collection
 
     /**
      * Find an item by name.
-     *
-     * @param string $name
-     * @return Item|false
      */
     public function findName(string $name): Item|false
     {
@@ -72,8 +60,6 @@ class Collection
 
     /**
      * Reset the collection.
-     *
-     * @return self
      */
     public function reset(): self
     {

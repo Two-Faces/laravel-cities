@@ -25,8 +25,6 @@ class EloquentItemTree extends Eloquent
 {
     /**
      * Temporary parent for tree building.
-     *
-     * @var self|null
      */
     public ?EloquentItemTree $parent;
 

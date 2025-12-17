@@ -74,6 +74,7 @@ class Geo extends EloquentItemTree
      * Filter by country code.
      *
      * @param Builder<static> $query
+     *
      * @return Builder<static>
      */
     public function scopeCountry(Builder $query, string $countryCode): Builder
@@ -85,6 +86,7 @@ class Geo extends EloquentItemTree
      * Filter capital cities.
      *
      * @param Builder<static> $query
+     *
      * @return Builder<static>
      */
     public function scopeCapital(Builder $query): Builder
@@ -96,6 +98,7 @@ class Geo extends EloquentItemTree
      * Filter by level.
      *
      * @param Builder<static> $query
+     *
      * @return Builder<static>
      */
     public function scopeLevel(Builder $query, string $level): Builder
@@ -107,6 +110,7 @@ class Geo extends EloquentItemTree
      * Get all descendants of current item.
      *
      * @param Builder<static> $query
+     *
      * @return Builder<static>
      */
     public function scopeDescendants(Builder $query): Builder
@@ -119,6 +123,7 @@ class Geo extends EloquentItemTree
      * Get all ancestors of current item.
      *
      * @param Builder<static> $query
+     *
      * @return Builder<static>
      */
     public function scopeAncenstors(Builder $query): Builder
@@ -131,6 +136,7 @@ class Geo extends EloquentItemTree
      * Get immediate children of current item.
      *
      * @param Builder<static> $query
+     *
      * @return Builder<static>
      */
     public function scopeChildren(Builder $query): Builder
@@ -144,6 +150,7 @@ class Geo extends EloquentItemTree
      * Search in name and alternames.
      *
      * @param Builder<static> $query
+     *
      * @return Builder<static>
      */
     public function scopeSearch(Builder $query, string $search): Builder
@@ -160,6 +167,7 @@ class Geo extends EloquentItemTree
      * Filter descendants of a parent.
      *
      * @param Builder<static> $query
+     *
      * @return Builder<static>
      */
     public function scopeAreDescentants(Builder $query, Geo $parent): Builder
@@ -212,7 +220,9 @@ class Geo extends EloquentItemTree
      * Get multiple items by IDs.
      *
      * @param array<int> $ids
+     *
      * @return Collection<int, static>
+     *
      * @phpstan-return Collection<int, static>
      */
     public static function getByIds(array $ids = []): Collection

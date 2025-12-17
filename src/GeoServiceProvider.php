@@ -71,5 +71,4 @@ class GeoServiceProvider extends ServiceProvider
             __DIR__ . '/migrations' => database_path('migrations'),
         ], 'migrations');
     }
-
 }
