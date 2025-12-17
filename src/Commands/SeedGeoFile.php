@@ -256,6 +256,9 @@ class SeedGeoFile extends Command
         $batch = 0;
 
         try {
+            // Ensure fresh database connection for long-running import
+            $this->db->reconnect();
+
             $this->db->beginTransaction();
 
             // Clear table if not appending
