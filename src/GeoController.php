@@ -56,7 +56,7 @@ class GeoController extends Controller
     }
 
     // [Collection] Search for %$name% in 'name' and 'alternames'. Optional filter to children of $parent_id
-    public function search($name, $parent_id = null)
+    public function search(string $name, ?$parent_id = null)
     {
         if ($parent_id) {
             return $this->applyFilter(Geo::searchNames($name, Geo::find($parent_id)));
@@ -139,3 +139,4 @@ class GeoController extends Controller
         return $geo;
     }
 }
+
