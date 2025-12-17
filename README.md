@@ -1,5 +1,4 @@
 [![License](http://img.shields.io/badge/license-MIT-orange.svg)](https://tldrlegal.com/license/mit-license)
-[![Downloads](https://img.shields.io/packagist/dt/igaster/laravel_cities.svg?style=flat-square)](https://packagist.org/packages/igaster/laravel_cities)
 
 # Introduction
 
@@ -9,7 +8,6 @@ What you get:
 - Optimized [DB tree structure](https://en.wikipedia.org/wiki/Nested_set_model) for searching and traversing the tree.
 - Provides an Eloquent model (geo) with multiple query-scopes to help you build your queries.
 - Exposes a simple API that you can use to create AJAX calls. (Eg search while typing etc).
-- A sample vue.js component that that can be inserted into your forms and provides a UI to pick a location
 
 What you dont get:
 - geoIP & Postalcodes (not included in free sets)
@@ -19,14 +17,14 @@ What you dont get:
 	
 - Install with copmoser. Run:
 
-`composer require igaster/laravel_cities`
+`composer require two-faces/laravel-cities`
 
 The Service provider will be autodiscovered and registered by Laravel. If you are using Laravel version <5.5 then you  must manually add the Service Provider in app.php:
 
 ```php
 'providers' => [
     //...
-    Igaster\LaravelCities\GeoServiceProvider::class,
+    TwoFaces\LaravelCities\GeoServiceProvider::class,
 ];
 ```
 
@@ -77,8 +75,8 @@ artisan geo:seed US --append
 
 Create a json file with custom data at `storage\geo` and run the following command to pick a file to seed:
 
-```
-artisan geo:json
+```bash
+php artisan geo:import-json
 ```
 
 If an item exists in the DB (based on the 'id' value), then it will be updated else a new entry will be inserted. For example the following json file will rename `United States` to `USA` and it will add a child item (set by the parent_id value)
@@ -101,13 +99,13 @@ If an item exists in the DB (based on the 'id' value), then it will be updated e
 ```
 Please note that adding new items to the DB will reindex ALL items to rebuild the tree structure. Please be patient...
 
-An example file is provided: [countryNames.json](https://github.com/igaster/laravel_cities/blob/master/data/countryNames.json) which updates the official  country names with a most popular simplified version.
+An example file is provided: [countryNames.json](https://github.com/Two-Faces/laravel-cities/blob/master/data/countryNames.json) which updates the official  country names with a most popular simplified version.
 
 Tip: You can get a json representation from the DB by quering the API (see below)
 
 # Geo Model:
 
-You can use `Igaster\LaravelCities\Geo` Model to access the database. List of available properties:
+You can use `TwoFaces\LaravelCities\Geo` Model to access the database. List of available properties:
 
 ```php
 $geo->name;       // name of geographical point in plain ascii
@@ -126,8 +124,9 @@ Visit http://www.geonames.org > Info, for a more detailed description.
 # Usage
 
 ## Searching:
+
 ```php
-use Igaster\LaravelCities\Geo;
+use TwoFaces\LaravelCities\Models\Geo;
 
 Geo::getCountries();               // Get a Collection of all countries
 Geo::getCountry('US');             // Get item by Country code
@@ -154,27 +153,70 @@ $geo1->isAncenstorOf($geo2);    // (Bool) Check if $geo2 is Ancenstor of $geo1
 $geo2->isDescendantOf($geo1);   // (Bool) Check if $geo2 is Descentant of $geo1
 ```
 
-## Query scopes (Use them to Build custom queries)
+### Query Scopes
+
+Build custom queries using these powerful scopes:
+
 ```php
-Geo::level($level);     // Filter by Administration level: 
-                        // Geo::LEVEL_COUNTRY, Geo::LEVEL_CAPITAL, Geo::LEVEL_1, Geo::LEVEL_2, Geo::LEVEL_3
-Geo::country('US');     // (Shortcut) Items that belongs to country US 
-Geo::capital();         // (Shortcut) Items that are capitals
-Geo::search($name);     // Items that conain $name in name OR alternames (Case InSensitive)
-Geo::areDescentants($geo);   // Items that belong to $geo
+use TwoFaces\LaravelCities\Models\Geo;
 
-$geo->ancenstors();     // Items that contain $geo
-$geo->descendants();    // Items that belong to $geo
-$geo->children();       // Items that are direct children of $geo
+// Filter by administration level
+Geo::level(Geo::LEVEL_COUNTRY)->get();  // All countries
+Geo::level(Geo::LEVEL_CAPITAL)->get();  // All capitals
+Geo::level(Geo::LEVEL_1)->get();        // Admin level 1
+Geo::level(Geo::LEVEL_2)->get();        // Admin level 2
+Geo::level(Geo::LEVEL_3)->get();        // Admin level 3
 
+// Filter by country code
+Geo::country('US')->get();
 
-//--Scope usage Examples:
+// Filter capitals only
+Geo::capital()->get();
 
-// Get the States of USA in aplhabetic order
-Geo::getCountry('US')
-	->children()
-	->orderBy('name')
-	->get();
+// Search by name (case-insensitive, includes alternames)
+Geo::search('new york')->get();
+
+// Get descendants of a location
+Geo::areDescentants($parentGeo)->get();
+
+// Instance scopes
+$geo->ancenstors();     // Query ancestors
+$geo->descendants();    // Query descendants
+$geo->children();       // Query direct children
+```
+
+**Advanced Query Examples:**
+
+```php
+// Get all US states alphabetically
+$usStates = Geo::getCountry('US')
+    ->children()
+    ->orderBy('name')
+    ->get();
+
+// Get all cities in California with population > 100,000
+$californiaCity = Geo::findName('California');
+$largeCities = Geo::areDescentants($californiaCity)
+    ->where('population', '>', 100000)
+    ->orderBy('population', 'desc')
+    ->get();
+
+// Get all European capitals
+$europeanCountries = Geo::country('DE')
+    ->orWhere('country', 'FR')
+    ->orWhere('country', 'IT')
+    ->get();
+
+$capitals = Geo::capital()
+    ->whereIn('country', $europeanCountries->pluck('country'))
+    ->get();
+
+// Search for cities starting with 'San' in USA
+$sanCities = Geo::country('US')
+    ->where('name', 'like', 'San%')
+    ->orderBy('population', 'desc')
+    ->get();
+```
 
 // Get the 3 biggest cities of Greece
 Geo::getCountry('GR')
@@ -184,14 +226,14 @@ Geo::getCountry('GR')
 	->get();
 ```
 
-If you need more functionality you can extend `Igaster\LaravelCities\Geo` model and add your methods.
+If you need more functionality you can extend `TwoFaces\LaravelCities\Geo` model and add your methods.
 
 # HTTP API
 
 This package defines some API routes that can be used to query the DB through simple HTTP requests. To use them insert in your routes file:
 
 ```php
-\Igaster\LaravelCities\Geo::ApiRoutes();
+\TwoFaces\LaravelCities\Models\Geo::ApiRoutes();
 ```
 
 For example if you insert them in your `routes\api.php` (recomended) then the following URLs will be registered:
@@ -216,70 +258,6 @@ To reduce bandwith, all Geo model attributes will be returned except from `alter
 |fields=field1,field2               | Returns only the specified attributes   | api/geo/countries?fields=id,name|
 |fields=all                         | Returns all attributes                  | api/geo/countries?fields=all    |
 
-
-# Vue Component
-
-A [Vue component](https://github.com/igaster/laravel_cities/blob/master/vue/geo-slect.vue) is shipped with this package that plugs into the provided API and provides an interactive way to pick a location through a series of steps. Sorry, no live demo yet, just some screenshots:
-
-Step 1: Select your location. Drop down lists loads asynchronous:
-
-![Select Location](/docs/1.jpg?raw=true)
-
-Step 2: Reached to a destination. Path is displayed and button to edit selection:
-
-![Finished Selection](/docs/2.jpg?raw=true)
-
-Step 3: On form submition several fields are beeing submited:
-
-![Form Submited](/docs/3.jpg?raw=true)
-
-### Usage Guide
-
-Assuming that you are using Webpack to compile your assets, and you have included `vue-app.js`:
-
-### Add in your application
-
-In your main vue-app.js file add the component declaration:
-
-`Vue.component('geo-select', require('RELATIVE_PATH_TO/vendor/igaster/laravel_cities/src/vue/geo-select.vue'));`
-
 Alternative you may publish the component with
 
-`artisan vendor:publish --provider="Igaster\LaravelCities\GeoServiceProvider"`
-
-Component will be exported at `/resources/LaravelCities/geo-select.vue` so that you can make modifications...
-
-### Compile compoment
-
-`npm run dev` (or `npm run production`)
-
-### Use in blade files
-
-Example:
-```html
-<form action="post-url" method="POST">
-	<geo-select></geo-select>
-	<!-- Add more form fields here... -->
-	<input type="submit">
-</form>
-```
-
-The following inputs will be submited:
-
-- geo-id
-- geo-name
-- geo-long
-- geo-lat
-- geo-country
-- geo-country-code
-
-### Full syntax:
-
-```html
-<geo-select
-	prefix = "geo"                    <!-- change the  fields name prefix --> 
-	api-root-url = "\api"             <!-- Root url for API -->
-	:countries = "[390903,3175395]"   <!-- Limit to specific countries (defined by ids) -->
-	:enable-breadcrumb = "true"       <!-- Enable/Disable Breadcrumb -->
-></geo-select>
-```
+`artisan vendor:publish --provider="TwoFaces\LaravelCities\GeoServiceProvider"`

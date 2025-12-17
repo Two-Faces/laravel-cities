@@ -1,0 +1,14 @@
+parameters:
+    level: 8
+    paths:
+        - src
+    excludePaths:
+        - src/migrations
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - '#Unsafe usage of new static#'
+        - '#Property .+ has no type specified#'
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder<static\(TwoFaces\\LaravelCities\\Models\\Geo\)>::(search|level|descendants|ancenstors|children|country|capital|areDescentants)\(\)#'
+

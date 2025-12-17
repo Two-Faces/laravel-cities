@@ -1,39 +1,62 @@
 {
-    "name": "two-faces/laravel_cities",
-    "description": "Seed all countries/cities from geonames.org database. Searchable DB tree, ready to use API & a bonus vue.js component!",
-    "keywords": ["laravel", "geonames.org", "geolocation", "countries", "cities"],
+    "name": "two-faces/laravel-cities",
+    "description": "Seed all countries/cities from geonames.org database. Searchable DB tree, ready to use API! Refactored for Laravel 10+ and PHP 8.2+",
+    "keywords": ["laravel", "geonames.org", "geolocation", "countries", "cities", "nested-set", "geography"],
     "license": "MIT",
     "homepage": "https://github.com/Two-Faces/laravel_cities.git",
     "authors": [
         {
-            "name": "Giannis Gasteratos",
-            "email": "igasteratos@gmail.com"
+            "name": "Two Faces",
+            "email": "anton98767@gmail.com"
         }
-    ],	
+    ],
     "require": {
-        "laravel/framework": ">=5.0"
+        "php": "^8.2",
+        "ext-pdo": "*",
+        "ext-zip": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "laravel/framework": "^10.0 || ^11.0 || ^12.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^4.0|^5.0",
-        "phpunit/phpunit": "^8.0"
+        "phpstan/phpstan": "^1.10",
+        "laravel/pint": "^1.0",
+        "phpunit/phpunit": "^10.5",
+        "orchestra/testbench": "^8.0 || ^9.0"
     },
     "autoload": {
-        "psr-4" : {
-            "Igaster\\LaravelCities\\"          : "src/",
-            "Igaster\\LaravelCities\\Tests\\"   : "tests/"
+        "psr-4": {
+            "TwoFaces\\LaravelCities\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TwoFaces\\LaravelCities\\Tests\\": "tests/"
         }
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.2-dev"
+            "dev-master": "4.0-dev"
         },
         "laravel": {
             "providers": [
-                "Igaster\\LaravelCities\\GeoServiceProvider"
+                "TwoFaces\\LaravelCities\\GeoServiceProvider"
             ]
         }
     },
-
-    "minimum-stability": "stable"
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "optimize-autoloader": true
+    },
+    "scripts": {
+        "test": "phpunit",
+        "pint": "pint",
+        "pint:test": "pint --test",
+        "phpstan": "phpstan analyse --memory-limit=2G",
+        "analyse": "@phpstan"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
 

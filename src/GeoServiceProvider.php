@@ -1,65 +1,75 @@
 <?php
 
-namespace Igaster\LaravelCities;
+declare(strict_types=1);
+
+namespace TwoFaces\LaravelCities;
 
 use Illuminate\Support\ServiceProvider;
+use TwoFaces\LaravelCities\Commands\BuildPplTree;
+use TwoFaces\LaravelCities\Commands\ClearGeoDatabase;
+use TwoFaces\LaravelCities\Commands\DownloadGeoData;
+use TwoFaces\LaravelCities\Commands\ImportJsonFile;
+use TwoFaces\LaravelCities\Commands\SeedGeoFile;
 
 class GeoServiceProvider extends ServiceProvider
 {
-    public function boot()
+    /**
+     * Bootstrap the application services.
+     */
+    public function boot(): void
     {
-        // Load Routes
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
-
-        $this->publishes([
-            __DIR__ . '/vue' => resource_path('LaravelCities'),
-        ], 'vue');
-
+        $this->handleConfig();
         $this->handleMigrations();
-        $this->handleRoutes();
         $this->handleConsoleCommands();
     }
 
-    /*--------------------------------------------------------------------------
-    | Register Console Commands
-    |--------------------------------------------------------------------------*/
-
-    private function handleConsoleCommands()
+    /**
+     * Register the application services.
+     */
+    public function register(): void
     {
-        // Register Console Commands
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/laravel-cities.php',
+            'laravel-cities'
+        );
+    }
+
+    /**
+     * Handle configuration publishing.
+     */
+    private function handleConfig(): void
+    {
+        $this->publishes([
+            __DIR__ . '/../config/laravel-cities.php' => config_path('laravel-cities.php'),
+        ], 'config');
+    }
+
+    /**
+     * Register console commands.
+     */
+    private function handleConsoleCommands(): void
+    {
         if ($this->app->runningInConsole()) {
-
             $this->commands([
-                \Igaster\LaravelCities\commands\seedGeoFile::class,
-                \Igaster\LaravelCities\commands\seedJsonFile::class,
-                \Igaster\LaravelCities\commands\BuildPplTree::class,
-                \Igaster\LaravelCities\commands\Download::class,            ]);
-
+                BuildPplTree::class,
+                ClearGeoDatabase::class,
+                DownloadGeoData::class,
+                ImportJsonFile::class,
+                SeedGeoFile::class,
+            ]);
         }
     }
 
-    /*--------------------------------------------------------------------------
-    | Register Routes
-    |--------------------------------------------------------------------------*/
-
-    private function handleRoutes()
+    /**
+     * Handle database migrations.
+     */
+    private function handleMigrations(): void
     {
-        include __DIR__ . '/routes.php';
-    }
-
-    /*--------------------------------------------------------------------------
-    | Database Migrations
-    |--------------------------------------------------------------------------*/
-
-    private function handleMigrations()
-    {
-
         $this->loadMigrationsFrom(__DIR__ . '/migrations');
 
-        // Optional: Publish the migrations:
         $this->publishes([
-            __DIR__ . '/migrations' => base_path('database/migrations'),
-        ]);
+            __DIR__ . '/migrations' => database_path('migrations'),
+        ], 'migrations');
     }
 
 }

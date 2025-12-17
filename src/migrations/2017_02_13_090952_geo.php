@@ -1,43 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Geo extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('geo', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('parent_id')->nullable();
-            $table->integer('left')->nullable();
-            $table->integer('right')->nullable();
-            $table->integer('depth')->default(0);
-            $table->char('name', 60);
-            $table->text('alternames');
-            $table->char('country', 2);
-            $table->string('a1code', 25);
-            $table->char('level', 10);
-            $table->bigInteger('population');
-            $table->decimal('lat', 9, 6);
-            $table->decimal('long', 9, 6);
-            $table->char('timezone', 30);
+        $tableName = config('laravel-cities.table_name', 'geo');
+
+        Schema::create($tableName, function (Blueprint $table) {
+            $table->unsignedInteger('id')->primary();
+            $table->unsignedInteger('parent_id')->nullable()->index();
+            $table->unsignedInteger('left')->nullable()->index();
+            $table->unsignedInteger('right')->nullable()->index();
+            $table->unsignedSmallInteger('depth')->default(0)->index();
+            $table->string('name', 60)->index();
+            $table->json('alternames')->nullable();
+            $table->char('country', 2)->nullable()->index();
+            $table->string('a1code', 25)->nullable()->index();
+            $table->string('level', 10)->nullable()->index();
+            $table->unsignedBigInteger('population')->default(0);
+            $table->decimal('lat', 10, 7)->nullable();
+            $table->decimal('long', 10, 7)->nullable();
+            $table->string('timezone', 40)->nullable();
+
+            // Composite indexes for common queries
+            $table->index(['country', 'level']);
+            $table->index(['left', 'right', 'depth']);
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('geo');
+        $tableName = config('laravel-cities.table_name', 'geo');
+
+        Schema::dropIfExists($tableName);
     }
-}
+};

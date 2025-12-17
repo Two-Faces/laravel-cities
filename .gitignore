@@ -1,6 +1,31 @@
-/.idea
-/vendor
+# Dependencies
+/vendor/
+/node_modules/
 composer.lock
-Thumbs.db
+
+# Environment
 .env
+.env.backup
+
+# Testing
+/.phpunit.cache/
+/coverage/
 .phpunit.result.cache
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+*.cache
+npm-debug.log
+yarn-error.log
+
+# Laravel
+Homestead.json
+Homestead.yaml
