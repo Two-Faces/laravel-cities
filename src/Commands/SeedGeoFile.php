@@ -19,7 +19,7 @@ use TwoFaces\LaravelCities\Helpers\Item;
  */
 class SeedGeoFile extends Command
 {
-    protected $signature = 'geo:seed {country? : Country code to import (optional)} {--append : Append to existing data} {--chunk=1000 : Batch size for processing}';
+    protected $signature = 'geo:seed {country? : Country code to import (optional)} {--append : Append to existing data} {--chunk=1000 : Batch size for processing} {--cleanup : Delete geo files after successful import}';
 
     protected $description = 'Seed geonames data into database from text files';
 
@@ -53,6 +53,63 @@ class SeedGeoFile extends Command
     private function getTableName(): string
     {
         return $this->config->get('laravel-cities.table_name', 'geo');
+    }
+
+    /**
+     * Clean up geo files from storage.
+     */
+    private function cleanupFiles(?string $country): void
+    {
+        $storagePath = $this->config->get('laravel-cities.storage_path', 'geo');
+        $geoPath = storage_path($storagePath);
+
+        if (!is_dir($geoPath)) {
+            return;
+        }
+
+        $this->info('Cleaning up geo files...');
+
+        $deletedCount = 0;
+        $sourceName = $country ?? 'allCountries';
+
+        // Files to delete
+        $filesToDelete = [
+            "$sourceName.txt",
+            "$sourceName.zip",
+            'hierarchy.txt',
+            "hierarchy-$sourceName.txt",
+        ];
+
+        foreach ($filesToDelete as $file) {
+            $filePath = "$geoPath/$file";
+            if (file_exists($filePath)) {
+                if (unlink($filePath)) {
+                    $this->line("  Deleted: $file");
+                    $deletedCount++;
+                } else {
+                    $this->warn("  Failed to delete: $file");
+                }
+            }
+        }
+
+        // If country is null (allCountries), delete all country-specific hierarchy files
+        if ($country === null) {
+            $files = glob("$geoPath/hierarchy-*.txt");
+            if ($files !== false) {
+                foreach ($files as $file) {
+                    if (unlink($file)) {
+                        $this->line('  Deleted: ' . basename($file));
+                        $deletedCount++;
+                    }
+                }
+            }
+        }
+
+        if ($deletedCount > 0) {
+            $this->info("Cleanup completed: $deletedCount file(s) deleted");
+        } else {
+            $this->info('No files to cleanup');
+        }
     }
 
     /**
@@ -225,6 +282,11 @@ class SeedGeoFile extends Command
 
             $elapsed = round(microtime(true) - $start, 2);
             $this->info("Completed successfully in $elapsed seconds");
+
+            // Cleanup files if option is set
+            if ($this->option('cleanup')) {
+                $this->cleanupFiles($country);
+            }
 
             return self::SUCCESS;
         } catch (Exception $e) {
